@@ -23,7 +23,7 @@
 ## 🗂️ Project Structure
 
 ```
-simple-devops-project/
+devops-101-tasklab/
 │
 ├── app/                          # 🐍 Application source code
 │   ├── app.py                    # Flask application (API + UI)
