@@ -179,6 +179,7 @@ HTML_TEMPLATE = """
 #  Routes
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 @app.route('/')
 def index():
     logger.info("Serving index page")
