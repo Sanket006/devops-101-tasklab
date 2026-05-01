@@ -68,7 +68,7 @@ Make sure you have installed:
 ### 1. Clone the project
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/simple-devops-project.git
+git clone https://github.com/YOUR_USERNAME/devops-101-tasklab.git
 cd simple-devops-project
 ```
 
