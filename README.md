@@ -69,7 +69,7 @@ Make sure you have installed:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/devops-101-tasklab.git
-cd simple-devops-project
+cd devops-101-tasklab
 ```
 
 ### 2. Run with Docker Compose (recommended for beginners)
