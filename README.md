@@ -238,20 +238,46 @@ kubectl delete namespace devops101
 
 ### GitOps Deployment (Argo CD)
 
-Instead of manually deploying manifests using `kubectl apply`, you can use GitOps to automatically synchronize changes from this repository using **Argo CD**:
+Instead of manually deploying manifests using `kubectl apply`, you can use GitOps to automatically synchronize changes from this repository using **Argo CD** deployed via Helm:
 
-1. **Install Argo CD** in your Kubernetes cluster:
+1. **Install Argo CD** via Helm:
    ```bash
-   kubectl create namespace argocd
-   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+   # Add the Helm repository
+   helm repo add argo https://argoproj.github.io/argo-helm
+   helm repo update
+
+   # Install Argo CD
+   helm install argocd argo/argo-cd --namespace argocd --create-namespace
    ```
 
-2. **Apply the GitOps Application manifest**:
+2. **Configure your GitOps Application**:
+   Apply the GitOps `Application` resource directly to the cluster to track your fork:
    ```bash
-   kubectl apply -f k8s/argocd-app.yaml
+   kubectl apply -f - <<EOF
+   apiVersion: argoproj.io/v1alpha1
+   kind: Application
+   metadata:
+     name: devops101-app
+     namespace: argocd
+   spec:
+     project: default
+     source:
+       repoURL: 'https://github.com/Sanket006/devops-101-tasklab.git'
+       targetRevision: main
+       path: k8s
+     destination:
+       server: 'https://kubernetes.default.svc'
+       namespace: devops101
+     syncPolicy:
+       automated:
+         prune: true
+         selfHeal: true
+       syncOptions:
+         - CreateNamespace=true
+   EOF
    ```
 
-Argo CD will automatically create the `devops101` namespace and deploy the application. Any subsequent commits (such as image tag updates pushed by the CI/CD pipeline) will be automatically detected and synchronized to your cluster.
+Argo CD will automatically create the `devops101` namespace and sync the application. Any subsequent commits pushed to Git (like tag updates by the CI/CD pipeline) will be automatically pulled and deployed to your cluster.
 
 ---
 
@@ -293,20 +319,49 @@ Go to your GitHub repo → **Settings** → **Secrets and variables** → **Acti
 
 ---
 
-## 📊 Monitoring
+## 📊 Monitoring (Kubernetes + Helm)
 
-### Prometheus
-- URL: http://localhost:9090
-- Try these queries in the Prometheus UI:
-  - `tasks_total` — total number of tasks
-  - `tasks_done_total` — completed tasks
-  - `up{job="devops101-app"}` — is the app up?
+For Kubernetes environments, the monitoring stack is deployed via Helm using the `kube-prometheus-stack` chart, which installs Prometheus and Grafana.
 
-### Grafana
-- URL: http://localhost:3000
-- Login: `admin` / `devops101`
-- Prometheus is pre-configured as a datasource.
-- **Pre-configured Dashboard**: A default dashboard titled **DevOps 101 Task Manager Dashboard** is pre-loaded automatically. Go to **Dashboards** in the left menu to view it (visualizes application uptime, total/completed/pending task metrics, and history charts).
+### 1. Install Kube-Prometheus-Stack via Helm
+
+```bash
+# Add the Helm repository
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+# Install the chart using the custom values file
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  --create-namespace \
+  -f helm/monitoring-values.yaml
+```
+
+### 2. Configure Scrape & Dashboards in K8s
+
+- **Prometheus Auto-Scraping**: Apply the `ServiceMonitor` manifest so Prometheus automatically discovers and scrapes our app's `/metrics` endpoint:
+  ```bash
+  kubectl apply -f k8s/servicemonitor.yaml
+  ```
+- **Pre-configured Grafana Dashboard**: Apply the ConfigMap manifest to deploy the pre-configured Grafana dashboard:
+  ```bash
+  kubectl apply -f k8s/grafana-dashboard-configmap.yaml
+  ```
+
+Once applied, Grafana's sidecar will automatically detect this ConfigMap and load the **DevOps 101 Task Manager Dashboard** under the **DevOps 101** folder.
+
+### 3. Access Dashboards
+
+- **Prometheus UI**:
+  ```bash
+  kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+  ```
+  Visit: http://localhost:9090
+- **Grafana UI**:
+  ```bash
+  kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
+  ```
+  Visit: http://localhost:3000 (Credentials: `admin` / `devops101`)
 
 ---
 

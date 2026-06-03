@@ -124,23 +124,35 @@ docker compose up -d
 
 ### Prometheus Not Scraping App
 
-1. Open Prometheus UI: http://localhost:9090
-2. Go to **Status → Targets**
-3. Check if `devops101-app` shows `UP`
-4. If `DOWN`, check that app is running: `docker compose ps app`
+1. Forward port to access Prometheus:
+   ```bash
+   kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+   ```
+2. Open Prometheus UI: http://localhost:9090
+3. Go to **Status → Targets**
+4. Check if `serviceMonitor/devops101/devops101-app-monitor` shows `UP`.
+5. If `DOWN` or missing, verify that the `ServiceMonitor` is applied:
+   ```bash
+   kubectl get servicemonitors -n devops101
+   ```
 
 ---
 
 ### Grafana Can't See Data / Preloaded Dashboard Missing
 
-1. Open Grafana: http://localhost:3000
-2. Go to **Connections → Data Sources → Prometheus**
-3. Click **Save & test** — should say "Data source connected and labels found"
-4. If it fails, check that Prometheus is running: `docker compose ps prometheus`
-5. If the dashboard is missing, check the **Dashboards** menu in the left sidebar under the "DevOps 101" folder.
-6. If the dashboard is not present, check that the Grafana container logs show no provisioning errors:
+1. Forward port to access Grafana:
    ```bash
-   docker compose logs grafana
+   kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
+   ```
+2. Open Grafana: http://localhost:3000
+3. Go to **Connections → Data Sources → Prometheus** and click **Save & test** to verify the connection.
+4. If the dashboard is missing, check that the ConfigMap is applied in the correct namespace:
+   ```bash
+   kubectl get configmaps -n monitoring | grep devops101-grafana-dashboard
+   ```
+5. Check Grafana pod logs for sidecar provisioning issues:
+   ```bash
+   kubectl logs -l app.kubernetes.io/name=grafana -n monitoring -c grafana
    ```
 
 ---
@@ -148,15 +160,23 @@ docker compose up -d
 ## 🔑 Grafana Credentials & Password Reset
 
 ### Setting a custom password (recommended)
-You can configure a custom admin password before launching the stack by setting the `GRAFANA_ADMIN_PASSWORD` environment variable:
+You can configure a custom admin password before deploying by editing `helm/monitoring-values.yaml`:
+```yaml
+grafana:
+  adminPassword: "your-secure-password"
+```
+Or override it during installation/upgrade:
 ```bash
-GRAFANA_ADMIN_PASSWORD="your-new-password" docker compose up -d
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+  -n monitoring \
+  --set grafana.adminPassword="your-secure-password" \
+  -f helm/monitoring-values.yaml
 ```
 
-### Resetting the password for a running container
-If the container is already running, you can reset the password directly using the Grafana CLI:
+### Resetting the password for a running Pod
+If the pod is running, you can reset the password directly inside the Grafana container:
 ```bash
-docker exec -it devops101_grafana grafana cli admin reset-admin-password newpassword
+kubectl exec -it deploy/prometheus-grafana -n monitoring -c grafana -- grafana cli admin reset-admin-password newpassword
 ```
 
 ---
@@ -164,10 +184,13 @@ docker exec -it devops101_grafana grafana cli admin reset-admin-password newpass
 ## 🧹 Full Clean Reset
 
 ```bash
-# Remove everything including volumes (clean slate)
-docker compose down -v
-docker rmi devops101-app:local
-docker compose up -d --build
+# Clean up Kubernetes resources
+kubectl delete namespace devops101
+helm uninstall prometheus -n monitoring
+helm uninstall argocd -n argocd
+
+# Clean up Docker (if testing local app container)
+docker compose down
 ```
 
 ---
