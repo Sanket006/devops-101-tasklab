@@ -395,4 +395,39 @@ By completing this project, you will understand:
 
 ---
 
+## 🤝 Contributing
+
+We welcome contributions from the community to help improve this learning sandbox! To contribute:
+
+1. **Fork** the repository to your own GitHub account.
+2. **Clone** your fork locally and create a new branch for your feature or bug fix:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make your changes** and ensure they adhere to the project's formatting standards.
+4. **Run the test suite** locally to confirm everything passes:
+   ```bash
+   pytest tests/ -v
+   ```
+5. **Commit your changes** with a clear and concise commit message.
+6. **Push** to your branch and submit a **Pull Request** to the `main` branch.
+
+Please ensure your contributions focus on keeping the code simple, clear, and easy to understand for beginners.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**. You are free to use, modify, and distribute this software for educational and personal use.
+
+---
+
+## 📞 Contact Information
+
+If you have any questions, feedback, or need support while setting up the project:
+
+- **GitHub Issues**: Open a ticket on our [Issues page](https://github.com/Sanket006/devops-101-tasklab/issues) for bug reports or feature suggestions.
+- **Project Maintainer**: Sanket (Sanket006)
+- **Community Forum**: Join our discussions on GitHub for Q&A and collaboration.
+
 *Made with ❤️ for fresher DevOps engineers. Keep building, keep learning!*
