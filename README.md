@@ -303,8 +303,8 @@ Go to your GitHub repo → **Settings** → **Secrets and variables** → **Acti
 ### Grafana
 - URL: http://localhost:3000
 - Login: `admin` / `devops101`
-- Prometheus is pre-configured as a datasource
-- Create a new dashboard → Add Panel → Use PromQL queries above
+- Prometheus is pre-configured as a datasource.
+- **Pre-configured Dashboard**: A default dashboard titled **DevOps 101 Task Manager Dashboard** is pre-loaded automatically. Go to **Dashboards** in the left menu to view it (visualizes application uptime, total/completed/pending task metrics, and history charts).
 
 ---
 

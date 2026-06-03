@@ -128,12 +128,17 @@ docker compose up -d
 
 ---
 
-### Grafana Can't See Data
+### Grafana Can't See Data / Preloaded Dashboard Missing
 
 1. Open Grafana: http://localhost:3000
 2. Go to **Connections → Data Sources → Prometheus**
 3. Click **Save & test** — should say "Data source connected and labels found"
 4. If it fails, check that Prometheus is running: `docker compose ps prometheus`
+5. If the dashboard is missing, check the **Dashboards** menu in the left sidebar under the "DevOps 101" folder.
+6. If the dashboard is not present, check that the Grafana container logs show no provisioning errors:
+   ```bash
+   docker compose logs grafana
+   ```
 
 ---
 

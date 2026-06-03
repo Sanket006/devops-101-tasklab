@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'DevOps 101 Dashboards'
+    orgId: 1
+    folder: 'DevOps 101'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
