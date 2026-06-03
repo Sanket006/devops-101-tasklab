@@ -92,7 +92,10 @@ netstat -ano | findstr :5000
 lsof -i :5000
 
 # Kill the process
+# On Linux/Mac/Git Bash:
 kill -9 <PID>
+# On Windows PowerShell:
+Stop-Process -Id <PID> -Force
 ```
 
 ---

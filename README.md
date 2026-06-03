@@ -126,6 +126,8 @@ Visit: http://localhost:5000
 
 ## 🧪 Running Tests
 
+*Note: Make sure your virtual environment `.venv` is activated (see "Running Locally" step above) before installing dev dependencies.*
+
 ```bash
 # Install dev dependencies (includes pytest, pytest-cov, flake8)
 pip install -r app/requirements-dev.txt
@@ -282,7 +284,7 @@ Go to your GitHub repo → **Settings** → **Secrets and variables** → **Acti
 | `DOCKERHUB_TOKEN` | Your DockerHub access token (NOT password!) |
 | `REPO_TOKEN` | Your GitHub Personal Access Token (PAT) with repo scope (required to push manifest updates back to the repo) |
 
-**Note:** Secret names in GitHub cannot start with `GITHUB_` (e.g., `GITHUB_PAT` is blocked), so this token is named `REPO_TOKEN`.
+**Note:** Secret names in GitHub cannot start with `GITHUB_` (e.g., `GITHUB_PAT` is blocked), so this token is named `REPO_TOKEN`. We use a custom Personal Access Token (PAT) named `REPO_TOKEN` rather than the default, built-in `GITHUB_TOKEN` because commits pushed by `GITHUB_TOKEN` are blocked by GitHub from triggering downstream workflow runs. Using a PAT ensures that when the deploy stage updates the tag in `k8s/deployment.yaml`, the repository status successfully syncs with subsequent checks.
 
 **How to get a DockerHub token:**
 1. Login to hub.docker.com
