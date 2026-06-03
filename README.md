@@ -329,7 +329,7 @@ Go to your GitHub repo → **Settings** → **Secrets and variables** → **Acti
 
 ## 📊 Monitoring (Kubernetes + Helm)
 
-For Kubernetes environments, the monitoring stack can be deployed directly via Helm using the standard `kube-prometheus-stack` chart, which installs Prometheus and Grafana with zero custom configuration files needed:
+For Kubernetes environments, the monitoring stack is deployed via Helm using the standard `kube-prometheus-stack` chart, which installs Prometheus and Grafana.
 
 ### 1. Install Kube-Prometheus-Stack via Helm
 
@@ -344,30 +344,57 @@ helm install prometheus prometheus-community/kube-prometheus-stack \
   --create-namespace
 ```
 
-### 2. Auto-Discovery (Scraping Metrics)
+### 2. Verify Installation Status
 
-Prometheus is pre-configured to automatically scrape any pods that carry standard annotations. Our Flask application pod in `k8s/deployment.yaml` already has these annotations configured:
+Ensure that all monitoring pods are up and running:
+```bash
+kubectl get pods -n monitoring
+```
+*(Wait until all pods show `Running` or `Completed` status).*
+
+### 3. Auto-Discovery (Scraping Metrics)
+
+Prometheus automatically scrapes any pods carrying standard Prometheus annotations. Our Flask application pod in `k8s/deployment.yaml` is pre-configured with these annotations:
 ```yaml
 annotations:
   prometheus.io/scrape: "true"
   prometheus.io/path: "/metrics"
   prometheus.io/port: "5000"
 ```
-No extra manifest configurations (like `ServiceMonitor`) are required.
+Because of this, no additional Kubernetes custom resources (like `ServiceMonitor`) are needed.
 
-### 3. Access Dashboards
+### 4. Access Dashboards
 
 - **Prometheus UI**:
-  ```bash
-  kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
-  ```
-  Visit: http://localhost:9090 (Try querying metrics like `tasks_total` or `tasks_done_total`).
+  1. Port-forward the Prometheus service:
+     ```bash
+     kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
+     ```
+  2. Open your browser to **[http://localhost:9090](http://localhost:9090)**.
+  3. Try querying application metrics such as `tasks_total`, `tasks_done_total`, or `tasks_pending_total`.
+
 - **Grafana UI**:
+  1. Port-forward the Grafana service:
+     ```bash
+     kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
+     ```
+  2. Open your browser to **[http://localhost:3000](http://localhost:3000)**.
+  3. Log in using the username `admin`.
+
+### 5. Grafana Credentials
+
+To retrieve the auto-generated `admin` password:
+
+- **On Linux/Mac/Git Bash**:
   ```bash
-  kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
+  kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
   ```
-  Visit: http://localhost:3000 (Default login: `admin` / `prom-operator`)
-  You can create dashboards directly inside the Grafana UI or import standard dashboard layouts.
+- **On Windows PowerShell**:
+  ```powershell
+  [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath="{.data.admin-password}")))
+  ```
+
+*(Alternatively, you can set a custom password during helm install/upgrade by adding `--set grafana.adminPassword="your-secure-password"`).*
 
 ---
 
