@@ -3,6 +3,8 @@
 > **A complete, hands-on DevOps sandbox for freshers.**
 > Learn by doing — containerize, test, automate, and deploy a real application.
 
+![Task Manager Application](docs/assets/devops-101%20task%20manager.png)
+
 ---
 
 ## 📦 What This Project Covers
