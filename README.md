@@ -1,5 +1,11 @@
 # 🚀 DevOps 101 Task Manager
 
+[![CI/CD Pipeline](https://github.com/Sanket006/devops-101-tasklab/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/Sanket006/devops-101-tasklab/actions/workflows/ci-cd.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
+[![Docker Image](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/)
+[![Kubernetes](https://img.shields.io/badge/kubernetes-ready-blue.svg)](https://kubernetes.io/)
+
 > **A complete, hands-on DevOps sandbox for freshers.**  
 > Learn by doing — containerize, test, automate, and deploy a real-world web application.
 
@@ -14,9 +20,10 @@
 4. [Quick Start Installation](#-quick-start-installation)
 5. [Usage](#-usage)
 6. [Kubernetes & GitOps](#-kubernetes--gitops)
-7. [Contributing](#-contributing)
-8. [License](#-license)
-9. [Contact & Support](#-contact--support)
+7. [Docker Image Tagging Scheme](#-docker-image-tagging-scheme)
+8. [Contributing](#-contributing)
+9. [License](#-license)
+10. [Contact & Support](#-contact--support)
 
 ---
 
@@ -117,6 +124,27 @@ This repository is ready for Kubernetes deployments and GitOps workflows:
 * The pipeline is configured to automatically push changes and update Kubernetes configurations on GitHub.
 
 > 📖 **Check out the [Kubernetes & GitOps Deployment Guide](docs/kubernetes.md) and the [Monitoring Guide](docs/monitoring.md) to set up Kubernetes, Argo CD, and dashboards.**
+
+---
+
+## 🏷️ Docker Image Tagging Scheme
+
+To ensure reliable, traceable, and secure deployments, this project uses a structured Docker image tagging policy in the CI/CD pipeline:
+
+| Tag Format | Example | Trigger / Branch | Usage & Description |
+|---|---|---|---|
+| **`latest`** | `sanket006/devops101-app:latest` | Push to `main` | Always points to the most recent successful build on `main`. Great for quick local tests, but should be avoided in production. |
+| **`sha-<short-sha>`** | `sanket006/devops101-app:sha-b9094ea` | Push to `main` / `develop` | Unique, immutable tag tied to a specific Git commit SHA. **Highly recommended for Kubernetes deployments** to ensure reproducibility and trigger rolling updates correctly. |
+| **`<branch-name>`** | `sanket006/devops101-app:develop` | Push to any branch | Matches the source branch name. Used to verify the latest build state of features or staging branches. |
+
+### Example Usage in Kubernetes
+To use a specific stable version in your deployment manifest, reference the immutable SHA-based tag:
+```yaml
+spec:
+  containers:
+    - name: app
+      image: sanket006/devops101-app:sha-b9094ea
+```
 
 ---
 
