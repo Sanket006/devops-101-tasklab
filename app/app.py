@@ -30,6 +30,15 @@ tasks = [
     {"id": 5, "title": "Add Prometheus monitoring", "done": False, "created_at": "2024-01-05"},
 ]
 next_id = 6
+request_count = 0
+
+
+@app.before_request
+def count_requests():
+    global request_count
+    # Do not count internal health, readiness checks or metric scrapes
+    if request.path not in ['/metrics', '/health', '/ready']:
+        request_count += 1
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  HTML Template (Single Page App embedded in Python for simplicity)
@@ -216,6 +225,9 @@ tasks_done_total {done}
 # HELP tasks_pending_total Pending tasks
 # TYPE tasks_pending_total gauge
 tasks_pending_total {total - done}
+# HELP flask_http_request_total Total requests served by Flask
+# TYPE flask_http_request_total counter
+flask_http_request_total {request_count}
 """
     return metrics_text, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
