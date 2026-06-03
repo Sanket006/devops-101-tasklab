@@ -232,6 +232,23 @@ kubectl scale deployment devops101-app --replicas=3 -n devops101
 kubectl delete namespace devops101
 ```
 
+### GitOps Deployment (Argo CD)
+
+Instead of manually deploying manifests using `kubectl apply`, you can use GitOps to automatically synchronize changes from this repository using **Argo CD**:
+
+1. **Install Argo CD** in your Kubernetes cluster:
+   ```bash
+   kubectl create namespace argocd
+   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+   ```
+
+2. **Apply the GitOps Application manifest**:
+   ```bash
+   kubectl apply -f k8s/argocd-app.yaml
+   ```
+
+Argo CD will automatically create the `devops101` namespace and deploy the application. Any subsequent commits (such as image tag updates pushed by the CI/CD pipeline) will be automatically detected and synchronized to your cluster.
+
 ---
 
 ## ⚙️ CI/CD Pipeline (GitHub Actions)

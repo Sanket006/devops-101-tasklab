@@ -66,7 +66,7 @@ spec:
       containers:
         - name: app
           # ↓ This tag is updated automatically by the CI/CD pipeline
-          image: YOUR_DOCKERHUB_USERNAME/devops101-app:latest
+          image: sanket006/devops101-app:latest
           imagePullPolicy: Always
 
           ports:

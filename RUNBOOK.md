@@ -196,3 +196,32 @@ kubectl rollout status deployment/devops101-app -n devops101
 # Roll back to previous version
 kubectl rollout undo deployment/devops101-app -n devops101
 ```
+
+---
+
+## 🔄 GitOps Operations (Argo CD)
+
+### Access the Argo CD UI
+If you deployed Argo CD, you can access the dashboard by port-forwarding the API server:
+```bash
+# Port-forward the API server to http://localhost:8080
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+Retrieve the default `admin` password:
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+### Sync status & CLI commands
+If you install the Argo CD CLI, you can manage the application status directly:
+```bash
+# Log in to Argo CD server
+argocd login localhost:8080
+
+# Check application sync status
+argocd app get devops101-app
+
+# Manually trigger a synchronization
+argocd app sync devops101-app
+```
