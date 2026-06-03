@@ -188,8 +188,8 @@ docker rmi devops101-app:v1
 # Using minikube
 minikube start
 
-# OR using kind
-kind create cluster --name devops101
+# OR using kind (with config for host port forwarding)
+kind create cluster --config kind-config.yaml --name devops101
 ```
 
 ### Deploy the application
