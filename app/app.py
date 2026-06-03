@@ -135,9 +135,11 @@ HTML_TEMPLATE = """
         el.innerHTML = `
           <input class="task-check" type="checkbox" ${t.done ? 'checked' : ''}
                  onchange="toggleTask(${t.id}, this.checked)" />
-          <span class="task-title">${t.title}</span>
-          <span class="task-date">${t.created_at}</span>
+          <span class="task-title"></span>
+          <span class="task-date"></span>
           <button class="task-del" onclick="deleteTask(${t.id})">✕</button>`;
+        el.querySelector('.task-title').textContent = t.title;
+        el.querySelector('.task-date').textContent = t.created_at;
         list.appendChild(el);
       });
       document.getElementById('total').textContent = tasks.length;
@@ -229,11 +231,14 @@ def get_tasks():
 def create_task():
     global next_id
     data = request.get_json()
-    if not data or not data.get('title', '').strip():
-        abort(400, description="Task title is required")
+    if not isinstance(data, dict):
+        abort(400, description="Invalid request payload. Must be a JSON object.")
+    title = data.get('title')
+    if not isinstance(title, str) or not title.strip():
+        abort(400, description="Task title is required and must be a string")
     task = {
         "id": next_id,
-        "title": data['title'].strip(),
+        "title": title.strip(),
         "done": False,
         "created_at": datetime.now(timezone.utc).strftime('%Y-%m-%d')
     }
@@ -249,10 +254,15 @@ def update_task(task_id):
     if not task:
         abort(404, description=f"Task {task_id} not found")
     data = request.get_json()
+    if not isinstance(data, dict):
+        abort(400, description="Invalid request payload. Must be a JSON object.")
     if 'done' in data:
         task['done'] = bool(data['done'])
     if 'title' in data:
-        task['title'] = data['title'].strip()
+        title = data['title']
+        if not isinstance(title, str) or not title.strip():
+            abort(400, description="Task title must be a non-empty string")
+        task['title'] = title.strip()
     logger.info(f"Updated task {task_id}")
     return jsonify(task)
 

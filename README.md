@@ -83,8 +83,10 @@ That's it! Now open:
 | Service | URL | Credentials |
 |---|---|---|
 | 🌐 Task Manager App | http://localhost:5000 | — |
-| 📊 Grafana Dashboard | http://localhost:3000 | admin / devops101 |
+| 📊 Grafana Dashboard | http://localhost:3000 | `admin` / `devops101` (default)* |
 | 🔍 Prometheus | http://localhost:9090 | — |
+
+*\* Note: You can customize the Grafana admin password by setting the `GRAFANA_ADMIN_PASSWORD` environment variable before running Docker Compose, e.g., `GRAFANA_ADMIN_PASSWORD=mysecurepassword docker compose up -d`.*
 
 ### 3. Stop the stack
 

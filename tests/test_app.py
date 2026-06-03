@@ -11,7 +11,7 @@ import os
 # Add the app directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from app.app import app as flask_app, tasks
+from app.app import app as flask_app  # noqa: E402
 
 
 @pytest.fixture
@@ -124,3 +124,31 @@ class TestTaskAPI:
         """DELETE on nonexistent task should return 404."""
         res = client.delete('/api/tasks/99999')
         assert res.status_code == 404
+
+    def test_create_task_invalid_payload_type(self, client):
+        """POST /api/tasks with a non-dict payload should return 400."""
+        res = client.post('/api/tasks',
+                          data=json.dumps(["not a dict"]),
+                          content_type='application/json')
+        assert res.status_code == 400
+
+    def test_create_task_non_string_title(self, client):
+        """POST /api/tasks with a non-string title should return 400."""
+        res = client.post('/api/tasks',
+                          data=json.dumps({"title": 12345}),
+                          content_type='application/json')
+        assert res.status_code == 400
+
+    def test_update_task_invalid_payload_type(self, client):
+        """PATCH /api/tasks/:id with a non-dict payload should return 400."""
+        res = client.patch('/api/tasks/1',
+                           data=json.dumps("not a dict"),
+                           content_type='application/json')
+        assert res.status_code == 400
+
+    def test_update_task_non_string_title(self, client):
+        """PATCH /api/tasks/:id with a non-string title should return 400."""
+        res = client.patch('/api/tasks/1',
+                           data=json.dumps({"title": True}),
+                           content_type='application/json')
+        assert res.status_code == 400

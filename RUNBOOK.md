@@ -137,8 +137,16 @@ docker compose up -d
 
 ---
 
-## 🔑 Resetting Grafana Password
+## 🔑 Grafana Credentials & Password Reset
 
+### Setting a custom password (recommended)
+You can configure a custom admin password before launching the stack by setting the `GRAFANA_ADMIN_PASSWORD` environment variable:
+```bash
+GRAFANA_ADMIN_PASSWORD="your-new-password" docker compose up -d
+```
+
+### Resetting the password for a running container
+If the container is already running, you can reset the password directly using the Grafana CLI:
 ```bash
 docker exec -it devops101_grafana grafana cli admin reset-admin-password newpassword
 ```
