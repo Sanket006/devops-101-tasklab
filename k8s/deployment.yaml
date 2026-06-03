@@ -66,7 +66,7 @@ spec:
       containers:
         - name: app
           # ↓ This tag is updated automatically by the CI/CD pipeline
-          image: sanket006/devops101-app:sha-b9094ea
+          image: sanket006/devops101-app:sha-4fafcc9
           imagePullPolicy: Always
 
           ports:
