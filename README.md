@@ -269,6 +269,22 @@ Instead of manually deploying manifests using `kubectl apply`, you can use GitOp
    EOF
    ```
 
+3. **Access the Argo CD UI**:
+   - Port-forward the API server to access the dashboard:
+     ```bash
+     kubectl port-forward svc/argocd-server -n argocd 8080:443
+     ```
+   - Open your browser to **[http://localhost:8080](http://localhost:8080)**.
+   - Retrieve the `admin` password to log in:
+     - **On Linux/Mac/Git Bash**:
+       ```bash
+       kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+       ```
+     - **On Windows PowerShell**:
+       ```powershell
+       [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}")))
+       ```
+
 Argo CD will automatically create the `devops101` namespace and sync the application. Any subsequent commits pushed to Git (like tag updates by the CI/CD pipeline) will be automatically pulled and deployed to your cluster.
 
 ---

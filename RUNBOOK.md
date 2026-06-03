@@ -232,8 +232,15 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
 Retrieve the default `admin` password:
+
+**On Linux/Mac/Git Bash:**
 ```bash
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+**On Windows PowerShell:**
+```powershell
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}")))
 ```
 
 ### Sync status & CLI commands
