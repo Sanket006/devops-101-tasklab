@@ -1,6 +1,6 @@
 # =============================================================
 # Kubernetes Manifests — DevOps 101 Project
-# Apply with: kubectl apply -f k8s/deployment.yaml
+# Apply with: kubectl apply -f k8s/
 # =============================================================
 
 ---

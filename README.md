@@ -40,8 +40,10 @@ devops-101-tasklab/
 │       └── ci-cd.yml             # ⚙️ GitHub Actions pipeline
 │
 ├── k8s/                          # ☸️ Kubernetes manifests
-│   ├── deployment.yaml           # Deployment, Service, ConfigMap, HPA
-│   └── kind-config.yaml          # ☸️ Kind cluster port mapping configuration
+│   └── deployment.yaml           # Deployment, Service, ConfigMap, HPA
+│
+├── kind/                         # ☸️ Kind cluster configuration
+│   └── kind-config.yaml          # Port mapping configuration
 │
 ├── docker-compose.yml            # 🔄 Full local stack
 ├── .gitignore                    # Git ignore rules
@@ -185,7 +187,7 @@ docker rmi devops101-app:v1
 minikube start
 
 # OR using kind (with config for host port forwarding)
-kind create cluster --config k8s/kind-config.yaml --name devops101
+kind create cluster --config kind/kind-config.yaml --name devops101
 ```
 
 ### Deploy the application
@@ -194,8 +196,8 @@ kind create cluster --config k8s/kind-config.yaml --name devops101
 # 1. Edit k8s/deployment.yaml — replace YOUR_DOCKERHUB_USERNAME
 #    with your actual DockerHub username
 
-# 2. Apply the deployment manifest
-kubectl apply -f k8s/deployment.yaml
+# 2. Apply all manifests
+kubectl apply -f k8s/
 
 # 3. Check everything is running
 kubectl get all -n devops101
