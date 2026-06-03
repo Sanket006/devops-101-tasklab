@@ -61,21 +61,23 @@ The pipeline automatically triggers on:
 
 For the pipeline to run successfully, you must configure the following Secrets in your GitHub repository (**Settings** -> **Secrets and variables** -> **Actions** -> **New repository secret**):
 
-| Secret Name | Purpose | Example / Details |
+| Secret Name | Purpose | How to get it / Why it is needed |
 |---|---|---|
-| `DOCKERHUB_USERNAME` | Your Docker Hub Account username | e.g. `sanket006` |
-| `DOCKERHUB_TOKEN` | A personal access token generated on Docker Hub | Generate from Account Settings -> Security -> New Access Token |
-| `REPO_TOKEN` | A GitHub Personal Access Token (PAT) with `repo` scope | Required because the default `GITHUB_TOKEN` is blocked from triggering downstream workflows when committing back. |
+| `DOCKERHUB_USERNAME` | Your Docker Hub username | e.g. `sanket006` |
+| `DOCKERHUB_TOKEN` | Docker Hub Access Token | Login to hub.docker.com -> Account Settings -> Security -> New Access Token |
+| `REPO_TOKEN` | GitHub Personal Access Token (PAT) | Generate a Classic PAT with `repo` scope. **Why?** GitHub's default `GITHUB_TOKEN` is blocked from triggering workflows recursively. Using a custom PAT ensures that when the tag updates, downstream checks and GitOps triggers run successfully. |
 
 ---
 
 ## 🚀 The GitOps Loop & Local Syncing
 
-Because the `deploy` job commits the updated `k8s/deployment.yaml` file back to the remote repository, **your local repository will become one commit behind the remote main branch** every time a pipeline run finishes.
+Because the `deploy` job commits the updated `k8s/deployment.yaml` file back to the remote repository, **your local repository falls behind by one commit** every time the pipeline successfully runs.
 
 ### Syncing your local repo:
-Before you make new local changes or push again, always pull and rebase to merge the manifest updates:
+Before you make new local changes or push to GitHub, always pull the updates:
 ```bash
 git pull --rebase
 ```
-This keeps your local workspace in sync with the automated commits made by the pipeline.
+
+> 💡 **Why `--rebase`?**  
+> Using `--rebase` pulls the remote manifest update commit and places your local modifications *on top* of it. This prevents cluttering the git history with unnecessary "Merge branch 'main' of..." commits, keeping your commit log clean and linear.

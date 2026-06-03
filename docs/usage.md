@@ -28,19 +28,32 @@ The application exposes a RESTful API to manage tasks. All API payloads use the 
 | **GET** | `/ready` | Readiness check | None | `200 OK` |
 | **GET** | `/metrics` | Prometheus metrics | None | `200 OK` |
 
-### API Curl Examples
+### API Request Examples
 
-**Get All Tasks:**
-```bash
-curl -X GET http://localhost:5000/api/tasks
-```
+> ⚠️ **Note for Windows Users:** 
+> PowerShell uses `curl` as an alias for a different utility. If you are using PowerShell, run the **PowerShell equivalents** shown below, or run the standard `curl` commands in **Git Bash**, **WSL**, or **Command Prompt (cmd)**.
 
-**Create a New Task:**
-```bash
-curl -X POST http://localhost:5000/api/tasks \
-     -H "Content-Type: application/json" \
-     -d '{"title": "Configure Prometheus"}'
-```
+#### Get All Tasks
+* **Bash / Cmd (curl):**
+  ```bash
+  curl -X GET http://localhost:5000/api/tasks
+  ```
+* **PowerShell:**
+  ```powershell
+  Invoke-RestMethod -Uri http://localhost:5000/api/tasks -Method Get
+  ```
+
+#### Create a New Task
+* **Bash / Cmd (curl):**
+  ```bash
+  curl -X POST http://localhost:5000/api/tasks \
+       -H "Content-Type: application/json" \
+       -d '{"title": "Configure Prometheus"}'
+  ```
+* **PowerShell:**
+  ```powershell
+  Invoke-RestMethod -Uri http://localhost:5000/api/tasks -Method Post -ContentType "application/json" -Body '{"title": "Configure Prometheus"}'
+  ```
 
 ---
 

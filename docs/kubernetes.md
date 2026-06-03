@@ -34,6 +34,10 @@ Minikube runs a single-node Kubernetes cluster inside a virtual machine or conta
 
 Our Kubernetes manifests are organized inside the `k8s/` directory.
 
+> 📖 **Quick Concept Explanations:**
+> * **Namespace:** Think of this as a virtual folder or project boundary. Deploys inside the `devops101` namespace are isolated from other applications in the cluster.
+> * **NodePort Service:** Exposes a service on a specific port of the host node. This is a simple way to access your cluster web application from your host browser locally.
+
 1. **Open and update `k8s/deployment.yaml`:**
    Locate the container image line and replace `sanket006` with your Docker Hub username:
    ```yaml
@@ -81,9 +85,10 @@ helm install argocd argo/argo-cd --namespace argocd --create-namespace
 ```
 
 ### Step 2: Configure the GitOps Application
-Apply the following application manifest to track your fork:
+To register your repository directly in the cluster, replace `YOUR_GITHUB_USERNAME` in the block below, copy the command, and run it in your terminal:
 
-```yaml
+```bash
+kubectl apply -f - <<EOF
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -104,11 +109,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-```
-
-Save this content as `argocd-app.yaml` and apply it:
-```bash
-kubectl apply -f argocd-app.yaml
+EOF
 ```
 
 ### Step 3: Access the Argo CD UI

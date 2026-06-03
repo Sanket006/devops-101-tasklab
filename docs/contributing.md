@@ -76,11 +76,16 @@ We use semantic commit messages to make the git history readable and easy to sca
 * **`refactor:`** A code change that neither fixes a bug nor adds a feature (e.g., `refactor: clean up git deployment step`).
 * **`test:`** Adding missing tests or correcting existing tests (e.g., `test: add unit test for health endpoint`).
 
+### Examples:
+* ❌ **Bad:** `fixed code` or `added task feature`
+*  **Good:** `fix: correct index page title mismatch` or `feat: add due date tracking to tasks`
+
 ---
 
 ## 🎨 Coding Standards
 
 To ensure the repository remains simple, educational, and maintainable for beginners, please follow these principles:
+* **Zero Linter Errors:** Verify that the `flake8` command prints zero warnings or errors before pushing.
 * Keep functions small and focused on a single responsibility.
 * Write docstrings for all key functions, routes, and tests.
 * Avoid complex third-party library dependencies unless strictly necessary.

@@ -44,6 +44,7 @@ For rapid development, you can run the Flask application directly on your host m
    ```powershell
    .venv\Scripts\activate
    ```
+   *(Your terminal prompt should now show `(.venv)` at the beginning, indicating the virtual environment is active.)*
 4. **Install Dependencies:**
    ```powershell
    pip install -r requirements.txt
@@ -66,6 +67,7 @@ For rapid development, you can run the Flask application directly on your host m
    ```bash
    source .venv/bin/activate
    ```
+   *(Your terminal prompt should now show `(.venv)` at the beginning, indicating the virtual environment is active.)*
 4. **Install Dependencies:**
    ```bash
    pip install -r requirements.txt
@@ -91,6 +93,7 @@ Running the application using Docker Compose is the recommended way to stand up 
    ```bash
    docker compose up -d
    ```
+   *(The `-d` flag runs the containers in **detached mode**, meaning they will run silently in the background and free up your terminal immediately.)*
 
 3. **Verify the services:**
    Ensure the containers are active:
