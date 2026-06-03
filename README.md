@@ -261,6 +261,9 @@ Go to your GitHub repo → **Settings** → **Secrets and variables** → **Acti
 |---|---|
 | `DOCKERHUB_USERNAME` | Your DockerHub username |
 | `DOCKERHUB_TOKEN` | Your DockerHub access token (NOT password!) |
+| `REPO_TOKEN` | Your GitHub Personal Access Token (PAT) with repo scope (required to push manifest updates back to the repo) |
+
+**Note:** Secret names in GitHub cannot start with `GITHUB_` (e.g., `GITHUB_PAT` is blocked), so this token is named `REPO_TOKEN`.
 
 **How to get a DockerHub token:**
 1. Login to hub.docker.com
