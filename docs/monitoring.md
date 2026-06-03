@@ -32,19 +32,31 @@ We use the standard community-supported `kube-prometheus-stack` chart, which ins
 
 The Flask application exposes standard Prometheus-compatible metrics on the `/metrics` endpoint (powered by the `prometheus-client` Python SDK).
 
-Prometheus auto-discovers and scrapes metrics from any pod carrying specific annotations. Our application pod template in [deployment.yaml](file:///c:/Users/Lenovo/Sanket%20Personal/simple-devops-project/k8s/deployment.yaml#L61-L64) is pre-configured with these annotations:
+Because the `kube-prometheus-stack` relies on the Prometheus Operator, it does **not** scrape raw pod annotations by default. Instead, we use a **`PodMonitor`** resource ([k8s/podmonitor.yaml](file:///c:/Users/Lenovo/Sanket%20Personal/simple-devops-project/k8s/podmonitor.yaml)) to configure dynamic scraping.
 
-```yaml
-spec:
-  template:
-    metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/metrics"
-        prometheus.io/port: "5000"
+### Apply the PodMonitor:
+```bash
+kubectl apply -f k8s/podmonitor.yaml
 ```
 
-No additional Custom Resource Definitions (CRDs) like `ServiceMonitor` are needed for basic scraping in a standard configuration.
+The PodMonitor targets the application pods via labels and instructs Prometheus to pull metrics from the container's `http` port (port `5000`) every 15 seconds:
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: devops101-podmonitor
+  namespace: devops101
+  labels:
+    release: prometheus          # Matches the Helm release name of the prometheus stack
+spec:
+  selector:
+    matchLabels:
+      app: devops101             # Targets pods with this label
+  podMetricsEndpoints:
+    - port: http                 # Name of the port defined in the deployment container
+      path: /metrics
+      interval: 15s
+```
 
 ---
 

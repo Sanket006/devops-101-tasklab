@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: devops101-podmonitor
+  namespace: devops101
+  labels:
+    release: prometheus          # Matches the Helm release name used during installation
+spec:
+  selector:
+    matchLabels:
+      app: devops101             # Targets pods with this label
+  podMetricsEndpoints:
+    - port: http                 # Name of the port defined in the deployment container
+      path: /metrics
+      interval: 15s
