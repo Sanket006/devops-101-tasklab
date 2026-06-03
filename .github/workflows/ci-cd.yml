@@ -194,8 +194,8 @@ jobs:
           sed -i "s|image: ${{ env.IMAGE_NAME }}:.*|image: ${{ env.IMAGE_NAME }}:${{ needs.push.outputs.image_tag }}|g" k8s/deployment.yaml
           
           # Configure Git credentials
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
           
           # Commit and push changes if any exist
           git diff --quiet k8s/deployment.yaml || (git commit -am "chore: update image tag to ${{ needs.push.outputs.image_tag }} [skip ci]" && git push)
