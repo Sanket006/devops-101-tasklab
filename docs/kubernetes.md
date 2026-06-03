@@ -150,4 +150,10 @@ kubectl rollout restart deployment devops101-app -n devops101
 
 # Delete the namespace and cleanup all deployed resources
 kubectl delete namespace devops101
+
+# Completely delete the Kind cluster
+kind delete cluster --name devops101
+
+# Completely delete the Minikube cluster
+minikube delete
 ```
