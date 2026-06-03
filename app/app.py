@@ -40,6 +40,7 @@ def count_requests():
     if request.path not in ['/metrics', '/health', '/ready']:
         request_count += 1
 
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  HTML Template (Single Page App embedded in Python for simplicity)
 # ─────────────────────────────────────────────────────────────────────────────
