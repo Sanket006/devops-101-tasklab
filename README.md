@@ -40,7 +40,8 @@ devops-101-tasklab/
 │       └── ci-cd.yml             # ⚙️ GitHub Actions pipeline
 │
 ├── k8s/                          # ☸️ Kubernetes manifests
-│   └── deployment.yaml           # Deployment, Service, ConfigMap, HPA
+│   ├── deployment.yaml           # Deployment, Service, ConfigMap, HPA
+│   └── argocd-app.yaml           # Argo CD GitOps Application Config
 │
 ├── monitoring/                   # 📊 Monitoring stack
 │   ├── prometheus.yml            # Prometheus scrape config
@@ -50,6 +51,7 @@ devops-101-tasklab/
 │               └── ds.yml        # Grafana auto-configured datasource
 │
 ├── docker-compose.yml            # 🔄 Full local stack
+├── kind-config.yaml              # ☸️ Kind cluster port mapping configuration
 ├── .gitignore                    # Git ignore rules
 └── README.md                     # You are here!
 ```
