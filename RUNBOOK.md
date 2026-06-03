@@ -130,27 +130,23 @@ docker compose up -d
    ```
 2. Open Prometheus UI: http://localhost:9090
 3. Go to **Status → Targets**
-4. Check if `serviceMonitor/devops101/devops101-app-monitor` shows `UP`.
-5. If `DOWN` or missing, verify that the `ServiceMonitor` is applied:
+4. Check if the target matching our Flask app (port 5000) shows `UP`.
+5. If missing, verify that the application pod has the scraping annotations configured:
    ```bash
-   kubectl get servicemonitors -n devops101
+   kubectl get pods -n devops101 -o yaml
    ```
 
 ---
 
-### Grafana Can't See Data / Preloaded Dashboard Missing
+### Grafana Can't See Data
 
 1. Forward port to access Grafana:
    ```bash
    kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
    ```
 2. Open Grafana: http://localhost:3000
-3. Go to **Connections → Data Sources → Prometheus** and click **Save & test** to verify the connection.
-4. If the dashboard is missing, check that the ConfigMap is applied in the correct namespace:
-   ```bash
-   kubectl get configmaps -n monitoring | grep devops101-grafana-dashboard
-   ```
-5. Check Grafana pod logs for sidecar provisioning issues:
+3. Go to **Connections → Data Sources → Prometheus** and click **Save & test** to verify the connection is active.
+4. Check Grafana pod logs if you experience connection errors:
    ```bash
    kubectl logs -l app.kubernetes.io/name=grafana -n monitoring -c grafana
    ```
@@ -160,17 +156,12 @@ docker compose up -d
 ## 🔑 Grafana Credentials & Password Reset
 
 ### Setting a custom password (recommended)
-You can configure a custom admin password before deploying by editing `helm/monitoring-values.yaml`:
-```yaml
-grafana:
-  adminPassword: "your-secure-password"
-```
-Or override it during installation/upgrade:
+You can configure a custom admin password during installation or upgrade using `--set`:
 ```bash
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
   -n monitoring \
-  --set grafana.adminPassword="your-secure-password" \
-  -f helm/monitoring-values.yaml
+  --create-namespace \
+  --set grafana.adminPassword="your-secure-password"
 ```
 
 ### Resetting the password for a running Pod
@@ -178,6 +169,7 @@ If the pod is running, you can reset the password directly inside the Grafana co
 ```bash
 kubectl exec -it deploy/prometheus-grafana -n monitoring -c grafana -- grafana cli admin reset-admin-password newpassword
 ```
+
 
 ---
 

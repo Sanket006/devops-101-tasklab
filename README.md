@@ -321,7 +321,7 @@ Go to your GitHub repo → **Settings** → **Secrets and variables** → **Acti
 
 ## 📊 Monitoring (Kubernetes + Helm)
 
-For Kubernetes environments, the monitoring stack is deployed via Helm using the `kube-prometheus-stack` chart, which installs Prometheus and Grafana.
+For Kubernetes environments, the monitoring stack can be deployed directly via Helm using the standard `kube-prometheus-stack` chart, which installs Prometheus and Grafana with zero custom configuration files needed:
 
 ### 1. Install Kube-Prometheus-Stack via Helm
 
@@ -330,25 +330,22 @@ For Kubernetes environments, the monitoring stack is deployed via Helm using the
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
-# Install the chart using the custom values file
+# Install the stack with default settings
 helm install prometheus prometheus-community/kube-prometheus-stack \
   --namespace monitoring \
-  --create-namespace \
-  -f helm/monitoring-values.yaml
+  --create-namespace
 ```
 
-### 2. Configure Scrape & Dashboards in K8s
+### 2. Auto-Discovery (Scraping Metrics)
 
-- **Prometheus Auto-Scraping**: Apply the `ServiceMonitor` manifest so Prometheus automatically discovers and scrapes our app's `/metrics` endpoint:
-  ```bash
-  kubectl apply -f k8s/servicemonitor.yaml
-  ```
-- **Pre-configured Grafana Dashboard**: Apply the ConfigMap manifest to deploy the pre-configured Grafana dashboard:
-  ```bash
-  kubectl apply -f k8s/grafana-dashboard-configmap.yaml
-  ```
-
-Once applied, Grafana's sidecar will automatically detect this ConfigMap and load the **DevOps 101 Task Manager Dashboard** under the **DevOps 101** folder.
+Prometheus is pre-configured to automatically scrape any pods that carry standard annotations. Our Flask application pod in `k8s/deployment.yaml` already has these annotations configured:
+```yaml
+annotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: "/metrics"
+  prometheus.io/port: "5000"
+```
+No extra manifest configurations (like `ServiceMonitor`) are required.
 
 ### 3. Access Dashboards
 
@@ -356,12 +353,13 @@ Once applied, Grafana's sidecar will automatically detect this ConfigMap and loa
   ```bash
   kubectl port-forward svc/prometheus-kube-prometheus-prometheus -n monitoring 9090:9090
   ```
-  Visit: http://localhost:9090
+  Visit: http://localhost:9090 (Try querying metrics like `tasks_total` or `tasks_done_total`).
 - **Grafana UI**:
   ```bash
   kubectl port-forward svc/prometheus-grafana -n monitoring 3000:80
   ```
-  Visit: http://localhost:3000 (Credentials: `admin` / `devops101`)
+  Visit: http://localhost:3000 (Default login: `admin` / `prom-operator`)
+  You can create dashboards directly inside the Grafana UI or import standard dashboard layouts.
 
 ---
 
